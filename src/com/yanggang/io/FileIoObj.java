@@ -51,7 +51,6 @@ public class FileIoObj {
     // 템플릿 파일 읽기
     public List<String> readTemplate() {
 
-        // List<String> templateQueue = new LinkedList<String>();
         List<String> templateList = new ArrayList<String>();
         File file = new File(getClass().getClassLoader().getResource("template.txt").getFile());
         FileReader fileReader = null;
@@ -64,7 +63,6 @@ public class FileIoObj {
             String line = "";
             while ((line = bufReader.readLine()) != null) {
                 if(!line.equals("")) templateList.add(line);
-                // templateQueue.add(line);
             }
 
             bufReader.close();

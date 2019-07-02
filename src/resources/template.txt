@@ -1,9 +1,9 @@
-Family name: <?=USER.info.name.family?>\n
+Admin\n
 
-Given name: <?=USER.info.name.given ?>\n
+<? for ID in USERS.*.membership.id ?>
 
-Address : <?= USER.info.addrs.0.addr1?> <?= USER.info.addrs.0.addr2?>\n
+Membership Id : <?= ID ?>\n
 
-MemberShip : <?=USER.membership.grade?> <?= USER.membership.id ?>\n
+<? endfor ?>
 
 \n
