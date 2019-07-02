@@ -17,7 +17,6 @@ public class TemplateEngineService implements TemplateEngine {
     }
 
     // 템플릿 문자를 보고 JSON 데이터에서 해당 문자를 파싱해옴
-    @Override
     public String combine(List<String> templateList, String inputData) {
 
         StringBuilder result = new StringBuilder();
@@ -271,14 +270,11 @@ public class TemplateEngineService implements TemplateEngine {
     public void run() {
 
         List<String> templateList = fileIo.readTemplate();
-        // Queue<String> templateQueue = fileIo.readTemplate();
         String inputData = fileIo.readData();
 
         String result = combine(templateList, inputData);
         fileIo.writeData(result);
-
     }
-
 
 }
 
