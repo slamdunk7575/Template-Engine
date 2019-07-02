@@ -6,10 +6,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class TemplateEngineService implements TemplateEngine {
 
@@ -29,22 +26,50 @@ public class TemplateEngineService implements TemplateEngine {
             JSONParser jsonParse = new JSONParser();
             JSONArray userArray = (JSONArray) jsonParse.parse(inputData);
 
+            boolean onPrintTemplateCheck = false;
+            int onePrintTemplateLine = 0;
+
             for (int i = 0; i < userArray.size(); i++) {
 
                 JSONObject userObj = (JSONObject) userArray.get(i);
+                List<String> forTemplateList = new ArrayList<String>();
+                boolean forTemplateCheck = false;
 
-                // while (!templateQueue.isEmpty()) {
-                for (String templateLine : templateList) {
 
-                    // 템플릿 데이터를 라인별로 담은 Queue에서 한줄 가져옴
-                    // String templateLine = templateQueue.poll();
-                    String[] templateArr = templateLine.split("<\\?=");
+                // for (String templateLine : templateList) {
+                for (int j = 0; j < templateList.size(); j++) {
+                    String templateLine = templateList.get(j);
 
-                    String lineParsingResult = parsingData(userObj, templateArr);
-                    result.append(lineParsingResult).append(System.getProperty("line.separator"));
+                    if (templateLine.equals("") || (onPrintTemplateCheck && onePrintTemplateLine == j)) continue;
+
+                    if (templateLine.startsWith("<? for")) {
+                        forTemplateList.add(templateLine);
+                        forTemplateCheck = true;
+
+                        if (templateLine.contains("USERS")) {
+                            if (j > 0) onePrintTemplateLine = j - 1;
+                            onPrintTemplateCheck = true;
+                        }
+
+                    } else if (templateLine.equals("<? endfor ?>")) {
+                        forTemplateList.add(templateLine);
+                        forTemplateCheck = false;
+
+                        String forParsingResult = forTemplateHandler(userObj, forTemplateList);
+                        result.append(forParsingResult);
+                        // result.append(forParsingResult).append(System.getProperty("line.separator"));
+
+                    } else if (forTemplateCheck) {
+                        forTemplateList.add(templateLine);
+
+                    } else {
+                        String lineParsingResult = parsingData(userObj, templateLine);
+                        // result.append(lineParsingResult);
+                        result.append(lineParsingResult).append(System.getProperty("line.separator"));
+                    }
+
                 }
 
-                // result.append("\n").append(System.getProperty("line.separator"));
                 result.append(System.getProperty("line.separator"));
             }
 
@@ -83,9 +108,14 @@ public class TemplateEngineService implements TemplateEngine {
     }
 
 
-    public String parsingData(JSONObject userObj, String[] templateArr) {
+    public String parsingData(JSONObject userObj, String templateLine) {
 
+        String[] templateArr = templateLine.split("<\\?=");
         StringBuilder result = new StringBuilder();
+
+        if (!templateLine.contains("<?=")) {
+            result.append(removeSpecialTag(templateLine)).append("\n");
+        }
 
         // for (String templateStr : templateArr) {
         for (int i = 0; i < templateArr.length; i++) {
@@ -94,7 +124,8 @@ public class TemplateEngineService implements TemplateEngine {
             if (templateStr.contains(":")) {
                 result.append(templateStr);
             } else if (templateStr.equals("\n")) {
-                result.append("\n");
+                // result.append("\n");
+                continue;
             } else if (templateStr.contains("?>")) {
 
                 //(중요) Template에서 JSON 관련 정보는 어떻게 파싱해야 하는지에 대한 정보를 나타냄.
@@ -106,10 +137,9 @@ public class TemplateEngineService implements TemplateEngine {
 
                 Object curObj = userObj;
                 while (!parsingInfoQueue.isEmpty()) {
-                    // String curStr = parsingInfoQueue.poll().trim();
                     String curStr = parsingInfoQueue.poll().replaceAll("\\p{Z}", "");
 
-                    if (curStr.equals("USER")) continue;
+                    if (curStr.equals("USER") || curStr.equals("USERS")) continue;
 
                     if (curObj instanceof JSONObject) {
                         curObj = ((JSONObject) curObj).get(curStr);
@@ -136,6 +166,86 @@ public class TemplateEngineService implements TemplateEngine {
     }
 
 
+    public String forTemplateHandler(JSONObject userObj, List<String> forTemplateList) {
+
+        int forTemplateCount = 0;
+        String templateStr = null;
+        String exchangeStr = null;
+        Object forTemplateObj = null;
+        StringBuilder forTemplateResult = new StringBuilder();
+
+        for (String forTemplate : forTemplateList) {
+
+            if (forTemplate.startsWith("<? for")) {
+                String[] forTemplateArr = forTemplate.split(" in ");
+
+                // exchangeStr = forTemplateArr[0].replaceAll("\\<\\? for", "").replaceAll("\\p{Z}", "");
+                // forTemplateStr = forTemplateArr[1].replaceAll("\\?\\>", "").replaceAll("\\p{Z}", "");
+
+                exchangeStr = removeSpecialTag(forTemplateArr[0]).replaceAll("for", "");
+                templateStr = removeSpecialTag(forTemplateArr[1]).replaceAll("\\.\\*", "");
+
+                forTemplateObj = getForTemplateObj(userObj, templateStr);
+
+                if (forTemplateObj instanceof JSONArray) {
+                    forTemplateCount = ((JSONArray) forTemplateObj).size();
+                } else if (forTemplateObj instanceof JSONObject || forTemplateObj instanceof String) {
+                    forTemplateCount = 1;
+                }
+
+            } else if (!forTemplate.equals("<? endfor ?>")) {
+
+                for (int i = 0; i < forTemplateCount; i++) {
+                    // Address : <?= ADDR.addr1?> <?= ADDR.addr2?>\n
+                    String exchangedTemplate = null;
+                    if (forTemplateObj instanceof JSONArray) {
+                        exchangedTemplate = forTemplate.replaceAll(exchangeStr, templateStr + "." + i);
+                    } else if (forTemplateObj instanceof JSONObject || forTemplateObj instanceof String) {
+                        exchangedTemplate = forTemplate.replaceAll(exchangeStr, templateStr);
+                    }
+                    String parsingResult = parsingData(userObj, exchangedTemplate);
+                    // forTemplateResult.append(parsingResult).append(System.getProperty("line.separator"));
+                    forTemplateResult.append(parsingResult);
+                }
+            }
+        }
+
+        return forTemplateResult.toString();
+    }
+
+
+    public Object getForTemplateObj(JSONObject userObj, String forTemplateStr) {
+
+        Object curObj = userObj;
+
+        String removedParsingStr = forTemplateStr.replaceAll("\\?\\>", "");
+        String parsingStr = removedParsingStr.replaceAll("\\\\n", "");
+        String[] parsingInfo = parsingStr.split("\\.");
+
+        Queue<String> parsingInfoQueue = new LinkedList<String>(Arrays.asList(parsingInfo));
+
+        while (!parsingInfoQueue.isEmpty()) {
+            String curStr = parsingInfoQueue.poll().replaceAll("\\p{Z}", "");
+
+            if (curStr.equals("USER") || curStr.equals("USERS")) continue;
+
+            if (curObj instanceof JSONObject) {
+                curObj = ((JSONObject) curObj).get(curStr);
+            } else if (curObj instanceof JSONArray) {
+                if (((JSONArray) curObj).isEmpty()) {
+                    curObj = "?";
+                } else {
+                    curObj = ((JSONArray) curObj).get(Integer.parseInt(curStr));
+                }
+            } else if (parsingInfoQueue.size() == 1) {
+                curObj = ((JSONObject) curObj).get(curStr);
+            }
+        }
+
+        return curObj;
+    }
+
+
     // 다음 문자열이 숫자인자 확인하는 함수
     public boolean isInteger(String str) {
         int size = str.length();
@@ -148,10 +258,20 @@ public class TemplateEngineService implements TemplateEngine {
     }
 
 
+    public String removeSpecialTag(String templateStr) {
+        String removedSpecialTag = templateStr.replaceAll("\\<\\?", "")
+                .replaceAll("\\?\\>", "")
+                .replaceAll("\\p{Z}", "")
+                .replaceAll("\\\\n", "");
+        return removedSpecialTag;
+    }
+
+
     @Override
     public void run() {
 
         List<String> templateList = fileIo.readTemplate();
+        // Queue<String> templateQueue = fileIo.readTemplate();
         String inputData = fileIo.readData();
 
         String result = combine(templateList, inputData);

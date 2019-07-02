@@ -1,8 +1,10 @@
 package com.yanggang.io;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.function.Consumer;
 
 public class FileIoObj {
@@ -42,16 +44,15 @@ public class FileIoObj {
             }
         }
 
-        // return sb.toString();
-        return null;
+        return sb.toString();
     }
-
 
 
     // 템플릿 파일 읽기
     public List<String> readTemplate() {
 
-        List<String> templateList = new LinkedList<String>();
+        // List<String> templateQueue = new LinkedList<String>();
+        List<String> templateList = new ArrayList<String>();
         File file = new File(getClass().getClassLoader().getResource("template.txt").getFile());
         FileReader fileReader = null;
         BufferedReader bufReader = null;
@@ -62,7 +63,8 @@ public class FileIoObj {
 
             String line = "";
             while ((line = bufReader.readLine()) != null) {
-                templateList.add(line);
+                if(!line.equals("")) templateList.add(line);
+                // templateQueue.add(line);
             }
 
             bufReader.close();
@@ -86,9 +88,8 @@ public class FileIoObj {
     }
 
 
-
     // 결과 출력
-    public void writeData (String outResult) {
+    public void writeData(String outResult) {
 
         File file = new File("output.txt");
         FileWriter writer = null;
@@ -107,7 +108,7 @@ public class FileIoObj {
             try {
                 if (bufWriter != null) bufWriter.close();
                 if (writer != null) writer.close();
-            } catch (Exception e){
+            } catch (Exception e) {
                 consumer.accept(e);
             }
         }
