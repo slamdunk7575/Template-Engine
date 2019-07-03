@@ -11,7 +11,7 @@ import static com.yanggang.utils.Utils.removeSpecialTag;
 
 public class ForTemplateHandler extends LineTemplateHandler {
 
-    public String parsingFor(JSONObject userObj, List<String> forTemplateList) {
+    public String convertForTemplate(JSONObject userObj, List<String> forTemplateList) {
 
         int forTemplateCount = 0;
         String templateStr = null;
@@ -44,7 +44,7 @@ public class ForTemplateHandler extends LineTemplateHandler {
                     } else if (forTemplateObj instanceof JSONObject || forTemplateObj instanceof String) {
                         exchangedTemplate = forTemplateLine.replaceAll(exchangeStr, templateStr);
                     }
-                    String parsingResult = parsingLine(userObj, exchangedTemplate);
+                    String parsingResult = convertTemplateToData(userObj, exchangedTemplate);
                     forTemplateResult.append(parsingResult);
                 }
             }

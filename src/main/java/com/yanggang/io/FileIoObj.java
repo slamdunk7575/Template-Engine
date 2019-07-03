@@ -1,6 +1,10 @@
 package com.yanggang.io;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,14 +18,14 @@ public class FileIoObj {
 
         StringBuilder sb = new StringBuilder();
 
-        File file = new File(getClass().getClassLoader().getResource("data.txt").getFile());
-        // File file = new File("resources/data.txt");
-        FileReader fileReader = null;
+        InputStream inputStream = null;
+        InputStreamReader streamReader = null;
         BufferedReader bufReader = null;
 
         try {
-            fileReader = new FileReader(file);
-            bufReader = new BufferedReader(fileReader);
+            inputStream = getClass().getClassLoader().getResourceAsStream("data.txt");
+            streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            bufReader = new BufferedReader(streamReader);
 
             String line = "";
             while ((line = bufReader.readLine()) != null) {
@@ -39,7 +43,8 @@ public class FileIoObj {
         } finally {
             try {
                 bufReader.close();
-                fileReader.close();
+                streamReader.close();
+                inputStream.close();
             } catch (Exception e) {
                 consumer.accept(e);
             }
@@ -53,21 +58,21 @@ public class FileIoObj {
     public List<String> readTemplate() {
 
         List<String> templateList = new ArrayList<String>();
-        File file = new File(getClass().getClassLoader().getResource("template.txt").getFile());
-        // File file = new File("src/main/resources/template.txt");
-        FileReader fileReader = null;
+
+        InputStream inputStream = null;
+        InputStreamReader streamReader = null;
         BufferedReader bufReader = null;
 
         try {
-            fileReader = new FileReader(file);
-            bufReader = new BufferedReader(fileReader);
+
+            inputStream = getClass().getClassLoader().getResourceAsStream("template.txt");
+            streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            bufReader = new BufferedReader(streamReader);
 
             String line = "";
             while ((line = bufReader.readLine()) != null) {
-                if(!line.equals("")) templateList.add(line);
+                if (!line.equals("")) templateList.add(line);
             }
-
-            bufReader.close();
 
         } catch (FileNotFoundException e) {
             consumer.accept(e);
@@ -75,10 +80,12 @@ public class FileIoObj {
             consumer.accept(e);
         } catch (Exception e) {
             consumer.accept(e);
+
         } finally {
             try {
                 bufReader.close();
-                fileReader.close();
+                streamReader.close();
+                inputStream.close();
             } catch (Exception e) {
                 consumer.accept(e);
             }
@@ -91,7 +98,8 @@ public class FileIoObj {
     // 결과 출력
     public void writeData(String outResult) {
 
-        File file = new File("src/main/resources/output.txt");
+        File file = new File("output.txt");
+
         FileWriter writer = null;
         BufferedWriter bufWriter = null;
 

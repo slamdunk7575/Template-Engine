@@ -10,9 +10,10 @@ import java.util.Queue;
 import static com.yanggang.utils.Utils.removeSpecialTag;
 import static com.yanggang.utils.Utils.isStringUpperCase;
 
-public class LineTemplateHandler {
+public class LineTemplateHandler implements TemplateHandler {
 
-    public String parsingLine(JSONObject userObj, String templateLine) {
+    @Override
+    public String convertTemplateToData(JSONObject userObj, String templateLine) {
 
         StringBuilder result = new StringBuilder();
 
@@ -59,7 +60,7 @@ public class LineTemplateHandler {
             }
         }
 
-        result.append(System.getProperty("line.separator"));
+        // result.append(System.getProperty("line.separator"));
         return result.toString();
     }
 
