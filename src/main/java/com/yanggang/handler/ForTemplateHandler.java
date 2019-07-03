@@ -9,7 +9,7 @@ import static com.yanggang.utils.Utils.isStringUpperCase;
 import static com.yanggang.utils.Utils.removeSpecialTag;
 
 
-public class ForTemplateHandler extends LineHandler {
+public class ForTemplateHandler extends LineTemplateHandler {
 
     public String parsingFor(JSONObject userObj, List<String> forTemplateList) {
 

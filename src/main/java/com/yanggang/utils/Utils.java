@@ -13,7 +13,8 @@ public class Utils {
         return size > 0;
     }
 
-
+    
+    // 특수문자 제거하는 함수
     public static String removeSpecialTag(String templateStr) {
         String removedSpecialTag = templateStr
                 .replaceAll("\\<\\?\\=", "")
@@ -25,15 +26,13 @@ public class Utils {
     }
 
 
+    // 문자열이 대문자인지 판별하는 함수
     public static boolean isStringUpperCase(String str){
-
         char[] charArray = str.toCharArray();
-
         for(int i=0; i < charArray.length; i++){
             if( !Character.isUpperCase( charArray[i] ))
                 return false;
         }
-
         return true;
     }
 

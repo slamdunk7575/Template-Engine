@@ -10,7 +10,7 @@ import java.util.Queue;
 import static com.yanggang.utils.Utils.removeSpecialTag;
 import static com.yanggang.utils.Utils.isStringUpperCase;
 
-public class LineHandler {
+public class LineTemplateHandler {
 
     public String parsingLine(JSONObject userObj, String templateLine) {
 

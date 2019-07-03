@@ -1,13 +1,16 @@
 package com.yanggang.service;
 
 import com.yanggang.handler.ForTemplateHandler;
-import com.yanggang.handler.LineHandler;
+import com.yanggang.handler.LineTemplateHandler;
 import com.yanggang.io.FileIoObj;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static com.yanggang.utils.Utils.removeSpecialTag;
 
@@ -15,12 +18,12 @@ import static com.yanggang.utils.Utils.removeSpecialTag;
 public class TemplateEngineService implements TemplateEngine {
 
     private FileIoObj fileIo;
-    private LineHandler lineHandler;
+    private LineTemplateHandler lineTemplateHandler;
     private ForTemplateHandler forTemplateHandler;
 
-    public TemplateEngineService(FileIoObj fileIo, LineHandler lineHandler, ForTemplateHandler forTemplateHandler) {
+    public TemplateEngineService(FileIoObj fileIo, LineTemplateHandler lineTemplateHandler, ForTemplateHandler forTemplateHandler) {
         this.fileIo = fileIo;
-        this.lineHandler = lineHandler;
+        this.lineTemplateHandler = lineTemplateHandler;
         this.forTemplateHandler = forTemplateHandler;
     }
 
@@ -45,18 +48,19 @@ public class TemplateEngineService implements TemplateEngine {
 
                     String templateLine = templateList.get(j);
 
-                    if(templateLine.equals("\\n")) result.append(System.getProperty("line.separator"));
-
-                    if(!templateLine.contains("<?") || !templateLine.contains("?>")){
+                    if(!templateLine.contains("<?") || !templateLine.contains("?>") || templateLine.equals("")){
                         if(!notTemplateCheck && !templateLine.equals("\\n")) {
                             result.append(removeSpecialTag(templateLine))
+                                    .append(System.getProperty("line.separator"))
                                     .append(System.getProperty("line.separator"));
                             notTemplateCheck = true;
+
+                        } else if (templateLine.equals("\\n")) {
+                            result.append(System.getProperty("line.separator"));
                         }
                         continue;
                     }
 
-                    if (templateLine.equals("")) continue;
 
                     if (templateLine.startsWith("<? for")) {
                         forTemplateList.add(templateLine);
@@ -73,14 +77,14 @@ public class TemplateEngineService implements TemplateEngine {
                         forTemplateList.add(templateLine);
 
                     } else {
-                        String lineParsingResult = lineHandler.parsingLine(userObj, templateLine);
+                        String lineParsingResult = lineTemplateHandler.parsingLine(userObj, templateLine);
                         result.append(lineParsingResult);
                     }
                 }
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            consumer.accept(e);
         }
 
         return result.toString();
@@ -96,6 +100,13 @@ public class TemplateEngineService implements TemplateEngine {
         String result = convert(templateList, inputData);
         fileIo.writeData(result);
     }
+
+    // PrintStackTrace 출력
+    Consumer<Exception> consumer = e -> {
+        StringWriter errors = new StringWriter();
+        e.printStackTrace(new PrintWriter(errors));
+        System.out.println(errors.toString());
+    };
 
 }
 

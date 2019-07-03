@@ -15,6 +15,7 @@ public class FileIoObj {
         StringBuilder sb = new StringBuilder();
 
         File file = new File(getClass().getClassLoader().getResource("data.txt").getFile());
+        // File file = new File("resources/data.txt");
         FileReader fileReader = null;
         BufferedReader bufReader = null;
 
@@ -53,6 +54,7 @@ public class FileIoObj {
 
         List<String> templateList = new ArrayList<String>();
         File file = new File(getClass().getClassLoader().getResource("template.txt").getFile());
+        // File file = new File("src/main/resources/template.txt");
         FileReader fileReader = null;
         BufferedReader bufReader = null;
 
@@ -89,7 +91,7 @@ public class FileIoObj {
     // 결과 출력
     public void writeData(String outResult) {
 
-        File file = new File("output.txt");
+        File file = new File("src/main/resources/output.txt");
         FileWriter writer = null;
         BufferedWriter bufWriter = null;
 
