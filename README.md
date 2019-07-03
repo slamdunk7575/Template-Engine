@@ -23,7 +23,7 @@ Output: Family name: KIM
 프로젝트를 Clone or Download 합니다.
 <br>터미널을 실행시켜 해당 폴더로 이동.
 ~~~
-$ gradle bootjar
+$ gradle build
 ~~~
 
 build/libs 경로에 가보면 모든 의존성 라이브러리가 포함된 jar 파일을 확인 할 수 있음.
@@ -33,7 +33,7 @@ nohup java -jar TemplateEngine-0.0.1-SNAPSHOT.jar &
 tail -f nohup.out
 ~~~
 
-해당 폴더내 ouput.txt 파일이 생성됨.
+해당 폴더내 ouput.txt 파일 생성됨.
 
 ## Dev Env
 JAVA: 1.8
