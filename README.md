@@ -16,7 +16,7 @@ Data: [
                   },
 
 Template: Family name: <?=USER.info.name.family?>\n
-Output: Family name: KIM
+Output: Family name: YANG
 ~~~
 
 ## How To Build & Run
