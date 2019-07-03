@@ -36,7 +36,6 @@ public class TemplateEngineService implements TemplateEngine {
             JSONParser jsonParse = new JSONParser();
             JSONArray userArray = (JSONArray) jsonParse.parse(inputData);
 
-            boolean notTemplateCheck = false;
             for (int i = 0; i <userArray.size(); i++) {
 
                 JSONObject userObj = (JSONObject) userArray.get(i);
@@ -48,19 +47,7 @@ public class TemplateEngineService implements TemplateEngine {
 
                     String templateLine = templateList.get(j);
 
-                    if(!templateLine.contains("<?") || !templateLine.contains("?>") || templateLine.equals("")){
-                        if(!notTemplateCheck && !templateLine.equals("\\n")) {
-                            result.append(removeSpecialTag(templateLine))
-                                    .append(System.getProperty("line.separator"))
-                                    .append(System.getProperty("line.separator"));
-                            notTemplateCheck = true;
-
-                        } else if (templateLine.equals("\\n")) {
-                            result.append(System.getProperty("line.separator"));
-                        }
-                        continue;
-                    }
-
+                    if(checkTemplate(result, templateLine)) continue;
 
                     if (templateLine.startsWith("<? for")) {
                         forTemplateList.add(templateLine);
@@ -70,14 +57,14 @@ public class TemplateEngineService implements TemplateEngine {
                         forTemplateList.add(templateLine);
                         forTemplateCheck = false;
 
-                        String forParsingResult = forTemplateHandler.parsingFor(userObj, forTemplateList);
+                        String forParsingResult = forTemplateHandler.convertForTemplate(userObj, forTemplateList);
                         result.append(forParsingResult);
 
                     } else if (forTemplateCheck) {
                         forTemplateList.add(templateLine);
 
                     } else {
-                        String lineParsingResult = lineTemplateHandler.parsingLine(userObj, templateLine);
+                        String lineParsingResult = lineTemplateHandler.convertTemplateToData(userObj, templateLine);
                         result.append(lineParsingResult);
                     }
                 }
@@ -101,12 +88,33 @@ public class TemplateEngineService implements TemplateEngine {
         fileIo.writeData(result);
     }
 
+
     // PrintStackTrace 출력
     Consumer<Exception> consumer = e -> {
         StringWriter errors = new StringWriter();
         e.printStackTrace(new PrintWriter(errors));
         System.out.println(errors.toString());
     };
+
+
+    public boolean checkTemplate(StringBuilder result, String templateLine) {
+
+        boolean templateCheckResult = false;
+
+        if(!templateLine.contains("<?") || !templateLine.contains("?>") || templateLine.equals("")){
+            if(!result.toString().contains(removeSpecialTag(templateLine)) && !templateLine.equals("\\n")) {
+                result.append(removeSpecialTag(templateLine))
+                        .append(System.getProperty("line.separator"))
+                        .append(System.getProperty("line.separator"));
+
+            } else if (templateLine.equals("\\n")) {
+                result.append(System.getProperty("line.separator"));
+            }
+            templateCheckResult = true;
+        }
+
+        return templateCheckResult;
+    }
 
 }
 

@@ -10,6 +10,7 @@ public class App {
 
     public static void main(String[] args) {
 
+        System.out.println("템플릿 엔진 Start...");
         FileIoObj fileIoObj = new FileIoObj();
         LineTemplateHandler lineTemplateHandler = new LineTemplateHandler();
         ForTemplateHandler forTemplateHandler = new ForTemplateHandler();
@@ -18,5 +19,6 @@ public class App {
                 = new TemplateEngineService(fileIoObj, lineTemplateHandler, forTemplateHandler);
 
         templateEngineService.run();
+        System.out.println("템플릿 변환 Success!");
     }
 }
