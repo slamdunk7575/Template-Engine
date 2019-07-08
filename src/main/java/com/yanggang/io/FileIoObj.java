@@ -1,10 +1,13 @@
 package com.yanggang.io;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
 
 public class FileIoObj {
 
@@ -12,8 +15,9 @@ public class FileIoObj {
     public String readData() {
 
         StringBuilder sb = new StringBuilder();
+        String fileName = "data.txt";
 
-        InputStream inputStream = null;
+        /*InputStream inputStream = null;
         InputStreamReader streamReader = null;
         BufferedReader bufReader = null;
 
@@ -43,6 +47,19 @@ public class FileIoObj {
             } catch (Exception e) {
                 consumer.accept(e);
             }
+        }*/
+
+
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(ClassLoader.getSystemResource(fileName).toURI()))) {
+
+            br.lines().forEach(line -> sb.append(line).append("\n"));
+
+        } catch (FileNotFoundException e) {
+            consumer.accept(e);
+        } catch (IOException e) {
+            consumer.accept(e);
+        } catch (Exception e) {
+            consumer.accept(e);
         }
 
         return sb.toString();
@@ -53,8 +70,9 @@ public class FileIoObj {
     public List<String> readTemplate() {
 
         List<String> templateList = new ArrayList<String>();
+        String fileName = "template.txt";
 
-        InputStream inputStream = null;
+        /*InputStream inputStream = null;
         InputStreamReader streamReader = null;
         BufferedReader bufReader = null;
 
@@ -84,6 +102,19 @@ public class FileIoObj {
             } catch (Exception e) {
                 consumer.accept(e);
             }
+        }*/
+
+
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(ClassLoader.getSystemResource(fileName).toURI()))) {
+
+            templateList = br.lines().filter(line -> !line.equals("")).collect(Collectors.toList());
+
+        } catch (FileNotFoundException e) {
+            consumer.accept(e);
+        } catch (IOException e) {
+            consumer.accept(e);
+        } catch (Exception e) {
+            consumer.accept(e);
         }
 
         return templateList;
@@ -93,9 +124,11 @@ public class FileIoObj {
     // 결과 출력
     public void writeData(String outResult) {
 
+        String fileName = "output.txt";
+
         File file = new File("output.txt");
 
-        FileWriter writer = null;
+        /*FileWriter writer = null;
         BufferedWriter bufWriter = null;
 
         try {
@@ -114,7 +147,19 @@ public class FileIoObj {
             } catch (Exception e) {
                 consumer.accept(e);
             }
+        }*/
+
+        try (FileWriter writer = new FileWriter(fileName);
+             BufferedWriter bw = new BufferedWriter(writer)) {
+
+            bw.write(outResult);
+
+        } catch (IOException e) {
+            consumer.accept(e);
+        } catch (Exception e) {
+            consumer.accept(e);
         }
+
     }
 
     // PrintStackTrace 출력

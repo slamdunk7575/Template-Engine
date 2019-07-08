@@ -1,5 +1,8 @@
 package com.yanggang.utils;
 
+import com.yanggang.exception.FunctionWithException;
+import java.util.function.Function;
+
 public class Utils {
 
     // 다음 문자열이 숫자인지 확인하는 함수
@@ -34,6 +37,17 @@ public class Utils {
                 return false;
         }
         return true;
+    }
+
+
+    public static  <T, R, E extends Exception> Function<T, R> wrapper(FunctionWithException<T, R, E> fe) {
+        return arg -> {
+            try {
+                return fe.apply(arg);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        };
     }
 
 }
