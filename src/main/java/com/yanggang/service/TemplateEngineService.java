@@ -11,6 +11,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 import static com.yanggang.utils.Utils.removeSpecialTag;
 
@@ -49,6 +51,41 @@ public class TemplateEngineService implements TemplateEngine {
 
                     if(checkTemplate(result, templateLine)) continue;
 
+                    if (findForTemplate(templateLine, line -> line.startsWith("<? for"))) {
+                        forTemplateList.add(templateLine);
+                        forTemplateCheck = true;
+
+                    } else if (findForTemplate(templateLine, line -> line.equals("<? endfor ?>"))) {
+                        forTemplateList.add(templateLine);
+                        forTemplateCheck = false;
+
+                        String forParsingResult = forTemplateHandler.convertForTemplateToData(userObj, forTemplateList);
+                        result.append(forParsingResult);
+
+                    } else if (forTemplateCheck) {
+                        forTemplateList.add(templateLine);
+
+                    } else {
+                        String lineParsingResult = lineTemplateHandler.convertTemplateToData(userObj, templateLine);
+                        result.append(lineParsingResult);
+                    }
+                }
+            }
+
+
+            /*for (int i = 0; i <userArray.size(); i++) {
+
+                JSONObject userObj = (JSONObject) userArray.get(i);
+
+                List<String> forTemplateList = new ArrayList<String>();
+                boolean forTemplateCheck = false;
+
+                for (int j = 0; j < templateList.size(); j++) {
+
+                    String templateLine = templateList.get(j);
+
+                    if(checkTemplate(result, templateLine)) continue;
+
                     if (templateLine.startsWith("<? for")) {
                         forTemplateList.add(templateLine);
                         forTemplateCheck = true;
@@ -68,7 +105,8 @@ public class TemplateEngineService implements TemplateEngine {
                         result.append(lineParsingResult);
                     }
                 }
-            }
+            }*/
+
 
         } catch (Exception e) {
             consumer.accept(e);
@@ -89,20 +127,12 @@ public class TemplateEngineService implements TemplateEngine {
     }
 
 
-    // PrintStackTrace 출력
-    Consumer<Exception> consumer = e -> {
-        StringWriter errors = new StringWriter();
-        e.printStackTrace(new PrintWriter(errors));
-        System.out.println(errors.toString());
-    };
-
-
     public boolean checkTemplate(StringBuilder result, String templateLine) {
 
         boolean templateCheckResult = false;
 
-        if(!templateLine.contains("<?") || !templateLine.contains("?>") || templateLine.equals("")){
-            if(!result.toString().contains(removeSpecialTag(templateLine)) && !templateLine.equals("\\n")) {
+        if (!templateLine.contains("<?") || !templateLine.contains("?>") || templateLine.equals("")) {
+            if (!result.toString().contains(removeSpecialTag(templateLine)) && !templateLine.equals("\\n")) {
                 result.append(removeSpecialTag(templateLine))
                         .append(System.getProperty("line.separator"))
                         .append(System.getProperty("line.separator"));
@@ -115,6 +145,25 @@ public class TemplateEngineService implements TemplateEngine {
 
         return templateCheckResult;
     }
+
+
+
+    public boolean findForTemplate(String templateLine, Predicate<String> predicate) {
+
+        if (predicate.test(templateLine)) {
+            return true;
+        }
+        return false;
+    }
+
+
+
+    // PrintStackTrace 출력
+    Consumer<Exception> consumer = e -> {
+        StringWriter errors = new StringWriter();
+        e.printStackTrace(new PrintWriter(errors));
+        System.out.println(errors.toString());
+    };
 
 }
 

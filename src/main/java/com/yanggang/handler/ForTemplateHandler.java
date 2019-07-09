@@ -18,7 +18,7 @@ public class ForTemplateHandler {
         this.templateHandler = templateHandler;
     }
 
-    public String convertForTemplate(JSONObject userObj, List<String> forTemplateList) {
+    public String convertForTemplateToData(JSONObject userObj, List<String> forTemplateList) {
 
         StringBuilder forTemplateResult = new StringBuilder();
 
