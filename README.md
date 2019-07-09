@@ -53,6 +53,7 @@ Template를 DATA로 변환하는 처리는 각각의 Handler에 위임하였다.
 <br> TemplateHandler 인터페이스를 구현한 LineTemplateHandler는 Template을 한줄씩 처리한다. 
 <br> 이를 확장하여 ForTemplateHandler를 만들었고 다른 Handler를 추가할 수 있다.
 
-
+## To Do
+JAVA 8 문법으로 리팩토링 하기
 
 
