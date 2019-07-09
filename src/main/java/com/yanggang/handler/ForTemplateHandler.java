@@ -10,13 +10,7 @@ import java.util.stream.IntStream;
 import static com.yanggang.utils.Utils.removeSpecialTag;
 
 
-public class ForTemplateHandler {
-
-    private TemplateHandler templateHandler;
-
-    public ForTemplateHandler(TemplateHandler templateHandler) {
-        this.templateHandler = templateHandler;
-    }
+public class ForTemplateHandler extends LineTemplateHandler{
 
     public String convertForTemplateToData(JSONObject userObj, List<String> forTemplateList) {
 
@@ -40,7 +34,7 @@ public class ForTemplateHandler {
                         String exchangedTemplate = exchangeTemplate(templateInfo, forTemplateLine, i);
                         // 변환된 템플릿 문자열을 LineTemplateHandler에게 요청해서 파싱함.
                         // 예: Membership Id : <?= USERS.membership.id ?>\n
-                        String parsingResult = templateHandler.convertTemplateToData(userObj, exchangedTemplate);
+                        String parsingResult = convertTemplateToData(userObj, exchangedTemplate);
                         forTemplateResult.append(parsingResult);
                     });
                 });
@@ -78,7 +72,7 @@ public class ForTemplateHandler {
         String[] parsingInfo = removeSpecialTag(templateStr).split("\\.");
         Queue<String> parsingInfoQueue = new LinkedList<String>(Arrays.asList(parsingInfo));
 
-        Object forTemplateObj = templateHandler.findObjType(userObj, parsingInfoQueue);
+        Object forTemplateObj = findObjType(userObj, parsingInfoQueue);
         templateMap.put("forTemplateObj", forTemplateObj);
 
         if (forTemplateObj instanceof JSONArray) {
