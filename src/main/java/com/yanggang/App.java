@@ -13,7 +13,7 @@ public class App {
         System.out.println("템플릿 엔진 Start...");
         FileIoObj fileIoObj = new FileIoObj();
         LineTemplateHandler lineTemplateHandler = new LineTemplateHandler();
-        ForTemplateHandler forTemplateHandler = new ForTemplateHandler();
+        ForTemplateHandler forTemplateHandler = new ForTemplateHandler(lineTemplateHandler);
 
         TemplateEngineService templateEngineService
                 = new TemplateEngineService(fileIoObj, lineTemplateHandler, forTemplateHandler);

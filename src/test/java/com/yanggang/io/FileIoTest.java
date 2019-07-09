@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Queue;
 
 import static org.junit.Assert.*;
 
@@ -19,7 +18,6 @@ public class FileIoTest {
 
     @Test
     public void 템플릿_파일_읽기() {
-        // Queue<String> templateResult = fileIoObj.readTemplate();
         List<String> templateResult = fileIoObj.readTemplate();
         assertNotEquals(0, templateResult.size());
     }

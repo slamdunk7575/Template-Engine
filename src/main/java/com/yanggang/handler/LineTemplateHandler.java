@@ -19,31 +19,37 @@ public class LineTemplateHandler implements TemplateHandler {
         StringBuilder result = new StringBuilder();
         String[] templateArr = templateLine.split("<\\?=");
 
-       // Arrays.stream(templateArr).filter(templateStr -> templateStr.contains(":")).forEach(str -> result.append(str));
 
         IntStream.rangeClosed(0, templateArr.length-1).forEach(i -> {
+
+            String templateStr = templateArr[i];
 
             if (templateArr[i].contains(":")) {
                 result.append(templateArr[i]);
                 return;
-            }
 
-            String[] parsingArr = Arrays.stream(templateArr)
+            } else if (templateArr[i].contains("?>")) {
+
+                String parsingStr = removeSpecialTag(templateStr);
+                String[] parsingArr = parsingStr.split("\\.");
+
+            /*String[] parsingArr = Arrays.stream(templateArr)
                     .filter(templateStr -> templateStr.contains("?>"))
                     .map(str -> removeSpecialTag(str).split("\\."))
                     .flatMap(x -> Arrays.stream(x))
-                    .toArray(String[]::new);
+                    .toArray(String[]::new);*/
 
+                Queue<String> parsingStrQueue = new LinkedList<>(Arrays.asList(parsingArr));
+                Object curObj = findObjType(userObj, parsingStrQueue);
 
-            Queue<String> parsingStrQueue = new LinkedList<>(Arrays.asList(parsingArr));
-            Object curObj = findObjType(userObj, parsingStrQueue);
-
-            if (i < templateArr.length - 1) {
-                result.append(curObj).append(" ");
-            } else {
-                result.append(curObj).append(System.getProperty("line.separator"));
+                if (i < templateArr.length - 1) {
+                    result.append(curObj).append(" ");
+                } else {
+                    result.append(curObj).append(System.getProperty("line.separator"));
+                }
             }
         });
+
 
 
         /*for (int j = 0; j < templateArr.length; j++) {
@@ -87,11 +93,14 @@ public class LineTemplateHandler implements TemplateHandler {
             }
         }*/
 
+
         // result.append(System.getProperty("line.separator"));
         return result.toString();
     }
 
 
+
+    @Override
     public Object findObjType(Object curObj, Queue<String> parsingStrQueue) {
 
         while (!parsingStrQueue.isEmpty()) {
