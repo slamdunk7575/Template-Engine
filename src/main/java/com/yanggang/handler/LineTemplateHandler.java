@@ -20,7 +20,7 @@ public class LineTemplateHandler implements TemplateHandler {
         String[] templateArr = templateLine.split("<\\?=");
 
 
-        IntStream.rangeClosed(0, templateArr.length-1).forEach(i -> {
+        IntStream.rangeClosed(0, templateArr.length - 1).forEach(i -> {
 
             String templateStr = templateArr[i];
 
@@ -34,7 +34,7 @@ public class LineTemplateHandler implements TemplateHandler {
                 String[] parsingArr = parsingStr.split("\\.");
 
             /*String[] parsingArr = Arrays.stream(templateArr)
-                    .filter(templateStr -> templateStr.contains("?>"))
+                    .filter(str -> str.contains("?>"))
                     .map(str -> removeSpecialTag(str).split("\\."))
                     .flatMap(x -> Arrays.stream(x))
                     .toArray(String[]::new);*/
@@ -97,7 +97,6 @@ public class LineTemplateHandler implements TemplateHandler {
         // result.append(System.getProperty("line.separator"));
         return result.toString();
     }
-
 
 
     @Override

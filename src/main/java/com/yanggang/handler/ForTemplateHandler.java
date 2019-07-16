@@ -24,7 +24,8 @@ public class ForTemplateHandler extends LineTemplateHandler{
 
 
         forTemplateList.stream()
-                .filter(forTemplateLine -> !forTemplateLine.startsWith("<? for"))
+                // .filter(forTemplateLine -> !forTemplateLine.startsWith("<? for"))
+                .filter(forTemplateLine -> !forTemplateLine.matches("(.*<[?] for).*"))
                 .filter(forTemplateLine -> !forTemplateLine.equals("<? endfor ?>"))
                 .forEach(forTemplateLine -> {
 
