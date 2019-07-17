@@ -17,7 +17,8 @@ public class ForTemplateHandler extends LineTemplateHandler{
         StringBuilder forTemplateResult = new StringBuilder();
 
         Map<String, Object> templateInfo = forTemplateList.stream()
-                .filter(forTemplateLine -> forTemplateLine.startsWith("<? for"))
+                // .filter(forTemplateLine -> forTemplateLine.startsWith("<? for"))
+                .filter(forTemplateLine -> forTemplateLine.matches("(.*<[?] for).*"))
                 .map(forTemplateLine -> getTemplateInfo(userObj, forTemplateLine))
                 .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));

@@ -108,7 +108,9 @@ public class FileIoObj {
 
         try (BufferedReader br = Files.newBufferedReader(Paths.get(ClassLoader.getSystemResource(fileName).toURI()))) {
 
-            templateList = br.lines().filter(line -> !line.equals("")).collect(Collectors.toList());
+            templateList = br.lines()
+                            .filter(line -> !line.equals(""))
+                            .collect(Collectors.toList());
 
         } catch (FileNotFoundException e) {
             consumer.accept(e);
