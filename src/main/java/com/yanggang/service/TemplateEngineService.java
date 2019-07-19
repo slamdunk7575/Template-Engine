@@ -133,7 +133,8 @@ public class TemplateEngineService implements TemplateEngine {
 
         boolean templateCheckResult = false;
 
-        if (!templateLine.contains("<?") || !templateLine.contains("?>") || templateLine.equals("")) {
+        // if (!templateLine.contains("<?") || !templateLine.contains("?>") || templateLine.equals("")) {
+        if (!templateLine.matches("(.*<[?]).*") || !templateLine.matches("(.*[?]>).*") || templateLine.equals("")) {
             if (!result.toString().contains(removeSpecialTag(templateLine)) && !templateLine.equals("\\n")) {
                 result.append(removeSpecialTag(templateLine))
                         .append(System.getProperty("line.separator"))
