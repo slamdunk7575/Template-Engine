@@ -28,7 +28,8 @@ public class LineTemplateHandler implements TemplateHandler {
                 result.append(templateArr[i]);
                 return;
 
-            } else if (templateArr[i].contains("?>")) {
+            // } else if (templateArr[i].contains("?>")) {
+            } else if (templateArr[i].matches(".*[?]>.*")) {
 
                 String parsingStr = removeSpecialTag(templateStr);
                 String[] parsingArr = parsingStr.split("\\.");

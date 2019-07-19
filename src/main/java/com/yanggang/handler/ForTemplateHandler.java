@@ -65,7 +65,7 @@ public class ForTemplateHandler extends LineTemplateHandler{
         HashMap<String, Object> templateMap = new HashMap<>();
         Integer forTemplateCount = null;
 
-        String[] forTemplateArr = forTemplateLine.split(" in ");
+        String[] forTemplateArr = forTemplateLine.split("\\sin\\s");
         String exchangeStr = removeSpecialTag(forTemplateArr[0]).replaceAll("for", "");
         templateMap.put("exchangeStr", exchangeStr);
 

@@ -51,11 +51,13 @@ public class TemplateEngineService implements TemplateEngine {
 
                     if(checkTemplate(result, templateLine)) continue;
 
-                    if (findForTemplate(templateLine, line -> line.startsWith("<? for"))) {
+                    // if (findForTemplate(templateLine, line -> line.startsWith("<? for"))) {
+                    if (findForTemplate(templateLine, line -> line.matches("(.*<[?] for).*"))) {
                         forTemplateList.add(templateLine);
                         forTemplateCheck = true;
 
-                    } else if (findForTemplate(templateLine, line -> line.equals("<? endfor ?>"))) {
+                    // } else if (findForTemplate(templateLine, line -> line.equals("<? endfor ?>"))) {
+                    } else if (findForTemplate(templateLine, line -> line.matches("(<[?] endfor [?]>)"))) {
                         forTemplateList.add(templateLine);
                         forTemplateCheck = false;
 
