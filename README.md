@@ -55,6 +55,5 @@ Template를 DATA로 변환하는 처리는 각각의 Handler에 위임하였다.
 
 ## To Do
 JAVA 8 문법으로 리팩토링 하기
-<br>자바 정규표현식 사용하기
 
 
