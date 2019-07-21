@@ -3,6 +3,7 @@ package com.yanggang.service;
 import com.yanggang.handler.ForTemplateHandler;
 import com.yanggang.handler.LineTemplateHandler;
 import com.yanggang.io.FileIoObj;
+import com.yanggang.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -162,11 +163,13 @@ public class TemplateEngineService implements TemplateEngine {
 
 
     // PrintStackTrace 출력
-    Consumer<Exception> consumer = e -> {
+    Consumer<Exception> consumer = Utils::printException;
+
+    /*Consumer<Exception> consumer = e -> {
         StringWriter errors = new StringWriter();
         e.printStackTrace(new PrintWriter(errors));
         System.out.println(errors.toString());
-    };
+    };*/
 
 }
 

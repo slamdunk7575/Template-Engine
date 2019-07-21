@@ -1,5 +1,7 @@
 package com.yanggang.utils;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.function.Function;
 
 public class Utils {
@@ -36,6 +38,14 @@ public class Utils {
                 return false;
         }
         return true;
+    }
+
+
+    // Exception 출력 함수
+    public static void printException(Exception e) {
+        StringWriter errors = new StringWriter();
+        e.printStackTrace(new PrintWriter(errors));
+        System.out.println(errors.toString());
     }
 
 }

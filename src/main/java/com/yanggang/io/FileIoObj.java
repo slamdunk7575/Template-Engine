@@ -1,6 +1,8 @@
 package com.yanggang.io;
 
 
+import com.yanggang.utils.Utils;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -60,7 +62,7 @@ public class FileIoObj {
         } catch (IOException e) {
             consumer.accept(e);
         } catch (Exception e) {
-            consumer.accept(e);
+             consumer.accept(e);
         }
 
         return sb.toString();
@@ -160,15 +162,18 @@ public class FileIoObj {
         } catch (IOException e) {
             consumer.accept(e);
         } catch (Exception e) {
-            consumer.accept(e);
+             consumer.accept(e);
         }
 
     }
 
+
+    Consumer<Exception> consumer = Utils::printException;
+
     // PrintStackTrace 출력
-    Consumer<Exception> consumer = e -> {
+    /*Consumer<Exception> consumer = e -> {
         StringWriter errors = new StringWriter();
         e.printStackTrace(new PrintWriter(errors));
         System.out.println(errors.toString());
-    };
+    };*/
 }
